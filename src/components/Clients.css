@@ -1,0 +1,65 @@
+.clients-circle {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .circle {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    animation: pop-bounce 2s infinite alternate ease-in-out;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .inner-circle {
+    width: 85%;
+    height: 85%;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .logo-img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+  }
+  
+  /* Positioning circles in a circular pattern */
+  .circle-1 { top: 5%; left: 40%; }
+  .circle-2 { top: 20%; left: 70%; }
+  .circle-3 { top: 45%; left: 90%; }
+  .circle-4 { bottom: 5%; left: 75%; }
+  .circle-5 { bottom: 15%; left: 50%; }
+  .circle-6 { bottom: 25%; left: 25%; }
+  .circle-7 { bottom: 5%; right: 75%; }
+  .circle-8 { bottom: 15%; right: 50%; }
+  .circle-9 { bottom: 25%; right: 25%; }
+  .circle-10 { top: 5%; right: 40%; }
+  .circle-11 { top: 20%; right: 70%; }
+  .circle-12 { top: 45%; right: 90%; }
+  
+  /* Animation */
+  @keyframes pop-bounce {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); }
+  }
+  
+  /* Hover Effect */
+  .circle:hover {
+    transform: scale(1.4);
+    box-shadow: 0px 6px 15px rgba(255, 255, 255, 0.5);
+  }
+  
