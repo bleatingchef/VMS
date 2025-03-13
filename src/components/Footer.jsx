@@ -1,6 +1,8 @@
 import React from "react";
 import { Mail, Phone } from "lucide-react";
 import logo from "../assets/logo.png";
+import { Link } from 'react-router-dom';
+
 
 const Footer = () => {
   return (
@@ -15,7 +17,8 @@ const Footer = () => {
         <div className="flex flex-col gap-3 max-w-sm">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg">
-              <img src={logo} alt="" className="w-40 sm:w-60" />
+            <Link to="/"><img src={logo} alt="Logo" className="h-8 md:h-10 w-auto" /></Link>
+              
             </div>
           </div>
           <p className="text-white text-base sm:text-lg italic">
