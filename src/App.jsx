@@ -8,6 +8,8 @@ import Features from "./components/Features";
 import Faqs from "./components/Faqs";
 import Footer from "./components/Footer";
 import Register from "./components/Register";
+import Login from "./components/Login";
+import VisitorPassForm from "./components/VisitorPassForm";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -28,6 +30,8 @@ function App() {
           </>
         } />
         <Route path="/register-company" element={<Register />} />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/visitor-form" element={<VisitorPassForm/>} />
         {/* <Route path="/hero" element={<HomePage1 />} /> */}
       </Routes>
     </Router>

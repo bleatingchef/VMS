@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import logo from "../assets/logo.png";
 import mobileImg from "../assets/cat.gif";
 import { HiX } from "react-icons/hi";
-
 
 const faqsData = {
   heading: "FAQs",
@@ -23,6 +23,36 @@ const faqsData = {
 
 const Faqs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', comment: '' });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/faqs/add-faqs`, formData);
+      setMessage(response.data.message);
+      setFormData({ name: '', email: '', phone: '', comment: '' });
+
+      if (response.status >= 200 && response.status < 300) {
+        alert("Question submitted successfully!");
+        setIsModalOpen(false);
+      } else {
+        alert("Failed to Submit.");
+      }
+
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Something went wrong');
+    }
+    setLoading(false);
+  };
 
   return (
     <div className='text-black flex flex-col items-center p-6'>
@@ -46,48 +76,35 @@ const Faqs = () => {
       <h1 className='font-normal text-pink-800 text-2xl p-12'>
         Have a question for us?
         <button className='hover:cursor-pointer ' onClick={() => setIsModalOpen(true)}> Click here to submit.</button>
-        {/* <hr /> */}
       </h1>
 
-      {/* Modal */}
-       {isModalOpen && (
-              <div
-                className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md z-50 px-4"
-                onClick={() => setIsModalOpen(false)}
-              >
-                <div
-                  className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-lg md:max-w-2xl flex flex-col md:flex-row relative transform scale-100 hover:scale-105 transition-all duration-300"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {/* Close Button */}
-                  <button
-                    className="absolute top-3 right-3 text-2xl text-gray-600 hover:text-red-600"
-                    onClick={() => setIsModalOpen(false)}
-                  >
-                    <HiX />
-                  </button>
-      
-                  {/* Left Side */}
-                  <div className="w-full md:w-1/2 p-4 md:p-6 flex flex-col items-center justify-center bg-gradient-to-br from-pink-800 to-red-600 text-white text-center rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
-                    <img src={logo} alt="Logo" className="w-16 md:w-20 mb-3" />
-                    <h2 className="text-lg md:text-xl font-bold">"Let’s Bring Your Vision to Life!"</h2>
-                    <p className="mt-2 text-sm">Connect with us, and we’ll craft the perfect solution for you.</p>
-                    <img src={mobileImg} alt="Mobile" className="w-20 md:w-24 mt-4 drop-shadow-lg" />
-                  </div>
-      
-                  {/* Right Side */}
-                  <div className="w-full md:w-1/2 p-4 md:p-6 flex flex-col justify-center text-black">
-                    <input type="text" placeholder="Full Name" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" />
-                    <input type="email" placeholder="Work Email" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" />
-                    <input type="tel" placeholder="Mobile Number" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" />
-                    <textarea placeholder="Tell us about your requirements" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" rows="3"></textarea>
-                    <button className="w-full bg-gradient-to-br from-pink-800 to-red-600 text-white py-2 md:py-3 rounded-lg shadow-md hover:bg-red-700 transition-all duration-300">
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md z-50 px-4" onClick={() => setIsModalOpen(false)}>
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-lg md:max-w-2xl flex flex-col md:flex-row relative" onClick={(e) => e.stopPropagation()}>
+            <button className="absolute top-3 right-3 text-2xl text-gray-600 hover:text-red-600" onClick={() => setIsModalOpen(false)}>
+              <HiX />
+            </button>
+
+            <div className="w-full md:w-1/2 p-4 md:p-6 flex flex-col items-center justify-center bg-gradient-to-br from-pink-800 to-red-600 text-white text-center rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
+              <img src={logo} alt="Logo" className="w-16 md:w-20 mb-3" />
+              <h2 className="text-lg md:text-xl font-bold">"Let’s Bring Your Vision to Life!"</h2>
+              <p className="mt-2 text-sm">Connect with us, and we’ll craft the perfect solution for you.</p>
+              <img src={mobileImg} alt="Mobile" className="w-20 md:w-24 mt-4 drop-shadow-lg" />
+            </div>
+
+            <div className="w-full md:w-1/2 p-4 md:p-6 flex flex-col justify-center text-black">
+              <form onSubmit={handleSubmit}>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" required />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Work Email" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" required />
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Mobile Number" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" required />
+                <textarea name="comment" value={formData.comment} onChange={handleChange} placeholder="Tell us about your requirements" className="w-full p-2 md:p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-red-400" rows="3" required></textarea>
+                <button type="submit" className="w-full bg-gradient-to-br from-pink-800 to-red-600 text-white py-2 md:py-3 rounded-lg shadow-md hover:bg-red-700 transition-all duration-300" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
+              </form>
+              {message && <p className="mt-2 text-center text-red-600">{message}</p>}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

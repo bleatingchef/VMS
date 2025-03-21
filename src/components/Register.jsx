@@ -1,10 +1,35 @@
 import React, { useState } from "react";
 import work from "../assets/workspace.jpg";
 
+// Button Component
+const Button = ({ children, className, ...props }) => (
+  <button className={`w-40 bg-white text-pink-800 p-2 rounded-full ${className}`} {...props}>
+    {children}
+  </button>
+);
+
+// Input Component
+const Input = ({ className, ...props }) => (
+  <input className={`w-full p-2 border rounded-2xl placeholder-white ${className}`} {...props} />
+);
+
+// TextArea Component
+const TextArea = ({ className, ...props }) => (
+  <textarea className={`w-full p-2 border rounded-2xl placeholder-white ${className}`} {...props} />
+);
+
+// Card Component
+const Card = ({ children, className }) => (
+  <div className={`relative bg-gradient-to-r from-pink-800 to-red-700 opacity-70 p-8 rounded-4xl shadow-xl h-auto w-[400px] ${className}`}>
+    {children}
+  </div>
+);
+
 const Register = () => {
   const [step, setStep] = useState(1);
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [processing, setProcessing] = useState(false); // New State for Step 4
   const [logo, setLogo] = useState(null); // State for company logo
   const [formData, setFormData] = useState({
     companyName: "",
@@ -22,7 +47,10 @@ const Register = () => {
     } else if (step === 2 && formData.adminName && formData.adminMobile && formData.adminEmail) {
       sendOtp();
     } else if (step === 3 && otpVerified) {
-      alert("Registration Completed!");
+      setProcessing(true);
+      setTimeout(() => {
+        setStep(4); // Move to Step 4 after delay
+      }, 2000); // Simulate processing delay
     }
   };
 
@@ -56,11 +84,12 @@ const Register = () => {
       <img src={work} alt="Background" className="absolute inset-0 w-full h-full object-cover blur-md" />
 
       {/* Form Container */}
-      <div className="relative bg-gradient-to-r from-pink-800 to-red-700 opacity-70 p-8 rounded-4xl shadow-xl h-auto w-[400px]">
+      <Card>
         <h2 className="text-3xl font-semibold italic text-center mb-4">
-          {step === 1 && "Company Registration "}
+          {step === 1 && "Company Registration"}
           {step === 2 && "Admin Details"}
           {step === 3 && "OTP Verification"}
+          {step === 4 && "Processing Pass"}
         </h2>
 
         {/* Step 1: Company Registration */}
@@ -85,29 +114,23 @@ const Register = () => {
               />
             </label>
 
-            <input 
-              type="text" 
-              placeholder="Enter Company Name" 
-              className="w-full p-2 border rounded-2xl placeholder-white" 
-              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })} 
+            <Input
+              type="text"
+              placeholder="Enter Company Name"
+              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
             />
-            <input 
-              type="text" 
-              placeholder="Enter Company Tagline" 
-              className="w-full p-2 border rounded-2xl placeholder-white" 
-              onChange={(e) => setFormData({ ...formData, companyTagline: e.target.value })} 
+            <Input
+              type="text"
+              placeholder="Enter Company Tagline"
+              onChange={(e) => setFormData({ ...formData, companyTagline: e.target.value })}
             />
-            <textarea 
-              placeholder="Company Description" 
-              className="w-full p-2 border rounded-2xl placeholder-white"
+            <TextArea
+              placeholder="Company Description"
               onChange={(e) => setFormData({ ...formData, companyDescription: e.target.value })}
-            ></textarea>
-          
-            {/* Centered Button */}
+            />
+
             <div className="flex justify-center w-full">
-              <button onClick={handleNextStep} className="w-40 bg-white cursor-pointer text-pink-800 p-2 rounded-full">
-                Next
-              </button>
+              <Button onClick={handleNextStep}>Next</Button>
             </div>
           </div>
         )}
@@ -115,45 +138,53 @@ const Register = () => {
         {/* Step 2: Admin Details */}
         {step === 2 && (
           <div className="space-y-4 flex flex-col items-center">
-            <input 
-              type="text" 
-              placeholder="Enter Admin Name" 
-              className="w-full p-2 border rounded-2xl placeholder-white" 
-              onChange={(e) => setFormData({ ...formData, adminName: e.target.value })} 
+            <Input
+              type="text"
+              placeholder="Enter Admin Name"
+              onChange={(e) => setFormData({ ...formData, adminName: e.target.value })}
             />
-            <input 
-              type="text" 
-              placeholder="Enter Admin Mobile Number" 
-              className="w-full p-2 border rounded-2xl placeholder-white" 
-              onChange={(e) => setFormData({ ...formData, adminMobile: e.target.value })} 
+            <Input
+              type="text"
+              placeholder="Enter Admin Mobile Number"
+              onChange={(e) => setFormData({ ...formData, adminMobile: e.target.value })}
             />
-            <input 
-              type="email" 
-              placeholder="Enter Admin Email ID" 
-              className="w-full p-2 border rounded-2xl placeholder-white" 
-              onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })} 
+            <Input
+              type="email"
+              placeholder="Enter Admin Email ID"
+              onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
             />
-            <button onClick={handleNextStep} className="w-40 bg-white cursor-pointer text-pink-800 p-2 rounded-full">
-              Get OTP
-            </button>
+            <Button onClick={handleNextStep}>Get OTP</Button>
           </div>
         )}
 
         {/* Step 3: OTP Verification */}
-        {step === 3 && otpSent && (
+        {step === 3 && otpSent && !processing && (
           <div className="space-y-4">
-            <input 
-              type="text" 
-              placeholder="Enter OTP" 
-              className="w-full p-2 border rounded-2xl placeholder-white" 
-              onChange={(e) => setFormData({ ...formData, otp: e.target.value })} 
+            <Input
+              type="text"
+              placeholder="Enter OTP"
+              onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
             />
-            <button onClick={verifyOtp} className="w-full bg-green-500 cursor-pointer text-white p-2 rounded">
+            <Button onClick={verifyOtp} className="bg-green-500 text-white">
               Verify OTP
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+
+        {/* Step 4: Processing Pass */}
+        {step === 4 && (
+          <div className="text-center space-y-4">
+            <p className="text-lg font-semibold">✅ Your pass is being processed!</p>
+            <p className="text-sm">
+              Your visitor pass will be sent to your number on <b>WhatsApp</b>.  
+              A link to your visitor pass will also be sent to your mobile number.
+            </p>
+            <Button onClick={() => alert("Thank you!")} className="bg-blue-500 text-white">
+              Done
+            </Button>
+          </div>
+        )}
+      </Card>
     </div>
   );
 };

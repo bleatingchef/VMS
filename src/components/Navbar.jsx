@@ -35,7 +35,7 @@ const Navbar = () => {
           Register Company
         </Link>
         <Link
-          to="/register-company"
+          to="/login"
           className="text-white text-sm md:text-lg px-6 py-3 md:px-10 md:py-3 hover:underline text-center rounded-md"
         >
           Login
