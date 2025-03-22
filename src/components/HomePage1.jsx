@@ -46,16 +46,16 @@ const HomePage1 = () => {
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between px-6 md:px-16 py-10 md:py-20 space-y-10 lg:space-y-0">
       <div className="w-full lg:w-1/2 text-center lg:text-left">
-        <h2 className="text-3xl md:text-5xl font-bold text-pink-800 mt-20">Mark Visitor Management</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-pink-800 mt-20">Mark Visitor Management</h2>
         <hr className="w-full md:w-[37rem] border-pink-800 my-4 mx-auto lg:mx-0" />
-        <p className="text-black text-lg md:text-xl">
+        <p className="text-black text-sm md:text-sm">
           Enhance security and streamline check-ins with our advanced visitor management system.
         </p>
-        <p className="text-black text-lg md:text-xl mt-4">
+        <p className="text-black text-sm md:text-sm mt-4">
           Track visitor entries in real-time, reduce wait times, and ensure a seamless check-in process with our QR code-based system.
         </p>
         <button 
-          className="mt-6 px-6 md:px-8 py-3 md:py-4 text-white text-lg md:text-2xl rounded-full bg-gradient-to-r from-pink-800 to-red-700 hover:scale-105 transition-all duration-300"
+          className="mt-6 px-6 md:px-4 py-3 md:py-2 text-white text-lg md:text-lg rounded-full bg-gradient-to-r from-pink-800 to-red-700 hover:scale-110 transition-all duration-300"
           onClick={() => setIsModalOpen(true)}
         >
           Book Demo

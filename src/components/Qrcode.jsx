@@ -55,14 +55,14 @@ const Qrcode = () => {
     <>
       {/* Header Section */}
       <div className="bg-gradient-to-r from-pink-800 to-red-700 text-center py-10">
-        <h1 className="text-4xl md:text-5xl font-bold text-white">🔍Snap • 📝Fill • 🚀Go!</h1>
-        <p className="text-lg md:text-2xl italic text-white mt-2">Quick & Hassle-Free!</p>
+        <h1 className="text-4xl md:text-4xl font-bold text-white transition-transform transform hover:scale-110 duration-300 ease-in-out">🔍Snap • 📝Fill • 🚀Go!</h1>
+        <p className="text-lg md:text-xl italic text-white mt-2 ">Quick & Hassle-Free!</p>
       </div>
 
       {/* QR Code Section */}
       <div className="flex flex-col md:flex-row items-center justify-center px-6 md:px-16 py-12 md:py-20">
         <div className="flex flex-col items-center text-center md:text-left md:items-start md:mr-12">
-          <h2 className="text-3xl md:text-5xl pb-4 font-bold bg-gradient-to-r from-pink-800 to-red-700 text-transparent bg-clip-text mb-6">
+          <h2 className="text-3xl md:text-4xl pb-4 font-bold bg-gradient-to-r from-pink-800 to-red-700 text-transparent bg-clip-text mb-6">
             A Scan or a Click – Your Choice To Transform!
           </h2>
           <div className="p-6 bg-white rounded-lg transition-all duration-300 hover:scale-105">
@@ -71,14 +71,14 @@ const Qrcode = () => {
         </div>
 
         <div className="md:ml-12 mt-12 md:mt-0 text-center md:text-right">
-          <h3 className="text-3xl md:text-5xl font-bold text-pink-800 mb-6">
+          <h3 className="text-3xl md:text-4xl font-bold text-pink-800 mb-2">
             Transform Your Experience with Us!
           </h3>
-          <p className="text-pink-800 mb-8 text-lg md:text-2xl leading-relaxed">
+          <p className="text-pink-800 mb-8 text-lg md:text-lg leading-relaxed max-w-2xl">
             💡 Experience the future of work with our powerful, user-friendly solution that enhances speed, accuracy, and convenience, all in just a few clicks!
           </p>
           <button
-            className="bg-gradient-to-r from-pink-800 to-red-700 text-white text-lg md:text-2xl px-6 md:px-8 py-3 md:py-4 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
+            className="bg-gradient-to-r from-pink-800 to-red-700 text-white text-lg md:text-lg px-6 md:px-4 py-3 md:py-2 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
             onClick={() => setIsModalOpen(true)}
           >
             ⚡ Tap, Try, Transform!

@@ -19,33 +19,33 @@ const Clients = () => {
 
   return (
     <div className="bg-gradient-to-r from-pink-800 to-red-700 text-white px-4 md:px-10 py-16">
-      <h2 className="text-center text-3xl md:text-5xl font-semibold mb-12">
+      <h2 className="text-center text-3xl md:text-4xl font-semibold mb-12">
         Empowering Industries with Innovation!
       </h2>
 
-      <div className="flex flex-col md:flex-row justify-center items-center gap-10">
+      <div className="flex flex-col md:flex-row justify-center items-center">
         {/* Left Side: Bullet Points */}
-        <div className="md:w-2/5 flex flex-col items-center md:items-end">
-          <ul className="list-disc text-lg space-y-3">
-            <li>Telecommunications</li>
-            <li>Banking & Insurance</li>
-            <li>Energy</li>
-            <li>Manufacturing</li>
-            <li>Plant & Machinery</li>
-            <li>Information Technology</li>
-            <li>Healthcare</li>
-            <li>Co-working</li>
-            <li>Educational Institutions</li>
+        <div className="md:w-2/5 flex flex-col items-center md:items-center md:max-w-sm">
+          <ul className="list-disc text-sm space-y-3">
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Telecommunications</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Banking & Insurance</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Energy</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Manufacturing</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Plant & Machinery</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Information Technology</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Healthcare</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Co-working</li>
+            <li className="transition-transform transform hover:scale-120 duration-300 ease-in-out">Educational Institutions</li>
           </ul>
         </div>
 
         {/* Right Side: Circular Client Logos */}
-        <div className="md:w-3/5 flex justify-center">
+        <div className="md:w-3/4 flex justify-center md:max-w-lg">
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap- md:gap-">
             {clients.map((client, index) => (
               <div
                 key={client.id}
-                className={`relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 
+                className={`relative w-16 h-16 sm:w-20 sm:h-20 md:w-20 md:h-20 
                 bg-white rounded-full flex items-center justify-center shadow-xl 
                 transform transition-all duration-500 ease-in-out 
                 hover:scale-110 hover:shadow-neon active:scale-95

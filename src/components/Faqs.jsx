@@ -56,13 +56,13 @@ const Faqs = () => {
 
   return (
     <div className='text-black flex flex-col items-center p-6'>
-      <h2 className='text-5xl font-semibold text-pink-800 mb-4'>{faqsData.heading}</h2>
+      <h2 className='text-4xl font-semibold text-pink-800 mb-4'>{faqsData.heading}</h2>
       <div className="w-full max-w-7xl">
         <div className="space-y-3 text-black">
           {faqsData.questions.map((faq, index) => (
             <div key={index} className="collapse collapse-arrow rounded-lg ">
               <input type="checkbox" id={`faq-accordion-${index}`} className="peer hidden" />
-              <label htmlFor={`faq-accordion-${index}`} className="collapse-title text-lg cursor-pointer block p-4">
+              <label htmlFor={`faq-accordion-${index}`} className="collapse-title text-sm cursor-pointer block p-4">
                 {faq.question}
               </label>
               <div className="collapse-content text-sm text-pink-800 px-4 py-2 peer-checked:block hidden">
@@ -73,7 +73,7 @@ const Faqs = () => {
         </div>
       </div>
 
-      <h1 className='font-normal text-pink-800 text-2xl p-12'>
+      <h1 className='font-normal text-pink-800 text-lg transition-transform transform hover:scale-110 duration-300 ease-in-out p-12'>
         Have a question for us?
         <button className='hover:cursor-pointer ' onClick={() => setIsModalOpen(true)}> Click here to submit.</button>
       </h1>

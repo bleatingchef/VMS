@@ -1,230 +1,184 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}`; // Replace with your actual backend URL
-
-const VisitorForm = () => {
+const VisitorPassForm = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     phone: "",
     email: "",
+    name: "",
     otp: "",
     selfie: null,
-    name: "",
     address: "",
     purpose: "",
     company: "",
-    idProof: "",
   });
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [termsChecked, setTermsChecked] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  // Handle text input change
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendTimer]);
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Handle file input change
   const handleFileChange = (e) => {
     setFormData({ ...formData, selfie: e.target.files[0] });
   };
 
-  // Send OTP to phone and email
   const sendOTP = async () => {
-    if (!formData.phone || !formData.email) {
-      alert("Please enter both phone and email to receive OTP.");
-      return;
-    }
-
-    setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/send-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: formData.phone, email: formData.email }),
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/visitor-pass/send-pass-otp`, {
+        email: formData.email,
       });
-
-      const result = await response.json();
-      if (response.ok) {
-        alert("OTP sent successfully!");
-      } else {
-        alert(result.message || "Failed to send OTP");
-      }
+      setOtpSent(true);
+      setResendTimer(30); // Set 30 seconds cooldown
+      toast.success("📩 OTP sent successfully!", { icon: "📩" });
     } catch (error) {
-      console.error("Error sending OTP:", error);
-      alert("An error occurred while sending OTP.");
-    } finally {
-      setLoading(false);
+      toast.error("❌ Failed to send OTP. Try again!");
     }
   };
 
-  // Verify OTP
   const verifyOTP = async () => {
-    if (!formData.otp) {
-      alert("Please enter the OTP.");
-      return;
-    }
-
-    setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: formData.phone, email: formData.email, otp: formData.otp }),
-      });
-
-      const result = await response.json();
-      if (response.ok) {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/visitor-pass/verify-pass-otp`,
+        {
+          email: formData.email,
+          otp: formData.otp.toString().trim(), // ✅ Ensure OTP is a string and trimmed
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+  
+      console.log("OTP Response:", response.data); // Debugging
+  
+      if (response.status === 200) {
         setOtpVerified(true);
-        nextStep();
+        toast.success("✅ OTP verified successfully!", { icon: "✅" });
+  
+        // Move to Step 2 automatically after 3 seconds
+        setTimeout(() => setStep(2), 3000);
       } else {
-        alert(result.message || "Invalid OTP. Please try again.");
+        toast.error("❌ Invalid OTP! Please try again.");
       }
     } catch (error) {
-      console.error("Error verifying OTP:", error);
-      alert("An error occurred while verifying OTP.");
-    } finally {
-      setLoading(false);
+      console.error("OTP verification error:", error.response?.data || error);
+  
+      const errorMessage =
+        error.response?.data?.message || "❌ OTP verification failed. Try again!";
+      toast.error(errorMessage);
     }
   };
+  
+  
 
-  // Move to the next step
-  const nextStep = () => {
-    if (step === 1 && !termsChecked) {
-      alert("Please accept the terms and conditions.");
-      return;
-    }
-    setStep((prev) => prev + 1);
-  };
-
-  // Move to the previous step
-  const prevStep = () => setStep((prev) => prev - 1);
-
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!otpVerified) {
+      toast.error("❌ Please verify OTP first!");
+      return;
+    }
 
-    const formDataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
+    const data = new FormData();
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
     });
 
     try {
-      const response = await fetch(`${API_BASE_URL}/submit-visitor`, {
-        method: "POST",
-        body: formDataToSend,
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/visitor-pass/store`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
+      toast.success("✅ Visitor pass generated successfully!");
 
-      if (response.ok) {
-        alert("Thanks for visiting! Your details have been submitted.");
-        setFormData({
-          phone: "",
-          email: "",
-          otp: "",
-          selfie: null,
-          name: "",
-          address: "",
-          purpose: "",
-          company: "",
-          idProof: "",
-        });
-        setStep(1);
-        navigate("/thank-you");
-      } else {
-        alert("Submission failed.");
-      }
+      setTimeout(() => {
+        window.location.href = "/"; // Redirect to Home Page
+      }, 2000);
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("An error occurred while submitting the form.");
-    } finally {
-      setLoading(false);
+      toast.error("❌ Error submitting form!");
+      console.error("Error submitting form", error);
     }
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-      <form onSubmit={handleSubmit} className="bg-white p-6 mt-20 rounded-lg shadow-md w-full max-w-md">
-        <div className="w-full max-w-md p-4 flex flex-col items-center">
-          <img src={logo} alt="Company Logo" className="w-24 mb-2" />
-          <p className="text-pink-800 text-center">A-52, Som Bazar, Chowk, Vikas Nagar, Uttam Nagar East, New Delhi-110059</p>
-        </div>
-
-        <h2 className="text-xl text-pink-800 font-bold text-center mb-4">Step {step}/6</h2>
-
+    <div className="p-4 pt-10 min-h-screen flex justify-center items-center">
+      <form onSubmit={handleSubmit} className="p-4 pt-30 min-h-screen border rounded-lg shadow-md max-w-md mx-auto">
+        {/* Step 1: OTP Verification */}
         {step === 1 && (
           <>
-            <input type="tel" name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} className="w-full p-2 mb-2 border rounded" required />
-            <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full p-2 mb-2 border rounded" required />
-            <button type="button" onClick={sendOTP} className="bg-pink-800 text-white p-2 rounded w-full mb-2" disabled={loading}>
-              {loading ? "Sending OTP..." : "Send OTP"}
-            </button>
-            <label className="flex items-center">
-              <input type="checkbox" checked={termsChecked} onChange={() => setTermsChecked(!termsChecked)} className="mr-2" />
-              <span className="text-pink-800">I accept the terms and conditions</span>
-            </label>
-            <button type="button" onClick={nextStep} className="bg-pink-800 text-white p-2 rounded w-full mt-2">Next</button>
+            <input type="tel" name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} required className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
+            <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
+            <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
+
+            {otpSent ? (
+              <>
+                <input type="text" name="otp" placeholder="Enter OTP" value={formData.otp} onChange={handleChange} required className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
+                <button type="button" onClick={verifyOTP} className="w-full bg-green-500 text-white p-2 rounded mb-2 hover:bg-green-600 active:scale-95 transition">
+                  Verify OTP
+                </button>
+
+                {/* Next Button (Visible Only When OTP is Verified) */}
+                {otpVerified && (
+                  <button type="button" onClick={() => setStep(2)} className="w-full bg-purple-500 text-white p-2 rounded mb-2 hover:bg-purple-600 active:scale-95 transition">
+                    Next
+                  </button>
+                )}
+
+                {/* Resend OTP Button */}
+                <button
+                  type="button"
+                  onClick={sendOTP}
+                  disabled={resendTimer > 0}
+                  className={`w-full p-2 rounded ${resendTimer > 0 ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600 active:scale-95 transition"} mb-2`}
+                >
+                  {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+                </button>
+              </>
+            ) : (
+              <button type="button" onClick={sendOTP} className="w-full bg-blue-500 text-white p-2 rounded mb-2 hover:bg-blue-600 active:scale-95 transition">
+                Send OTP
+              </button>
+            )}
           </>
         )}
 
+        {/* Step 2: Upload Selfie */}
         {step === 2 && (
           <>
-            <input type="text" name="otp" placeholder="Enter OTP" value={formData.otp} onChange={handleChange} className="w-full p-2 mb-2 border rounded" required />
-            <div className="flex justify-between">
-              <button type="button" onClick={prevStep} className="bg-pink-800 text-white p-2 rounded w-1/2 mr-2">Back</button>
-              <button type="button" onClick={verifyOTP} className="bg-pink-800 text-white p-2 rounded w-1/2" disabled={loading}>
-                {loading ? "Verifying..." : "Verify OTP"}
-              </button>
-            </div>
+            <input type="file" name="selfie" accept="image/*" onChange={handleFileChange} required className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
+            <button type="button" onClick={() => setStep(3)} className="w-full bg-purple-500 text-white p-2 rounded mb-2 hover:bg-purple-600 active:scale-95 transition">
+              Continue
+            </button>
           </>
         )}
 
-{step === 3 && (
-    <>
-      <input type="file" accept="image/*" onChange={handleFileChange} className="w-full p-2 mb-2 border outline outline-pink-800 rounded " required />
-      <div className="flex justify-between">
-        <button type="button" onClick={prevStep} className="bg-gradient-to-br from-pink-800 to-red-700 text-white p-2 rounded w-1/2 mr-2">Back</button>
-        <button type="button" onClick={nextStep} className="bg-gradient-to-br from-pink-800 to-red-700 text-white p-2 rounded w-1/2">Next</button>
-      </div>
-    </>
-  )}
+        {/* Step 3: Address & Purpose */}
+        {step === 3 && (
+          <>
+            <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
+            <input type="text" name="purpose" placeholder="Purpose" value={formData.purpose} onChange={handleChange} className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
+            <input type="text" name="company" placeholder="Company" value={formData.company} onChange={handleChange} className="w-full p-2 border mb-2 placeholder-gray-400 text-pink-800" />
 
-  {step === 4 && (
-    <>
-      <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="w-full p-2 mb-2 border outline outline-pink-800 rounded placeholder-gray-400" required />
-      <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} className="w-full p-2 mb-2 border rounded" required />
-      <div className="flex justify-between">
-        <button type="button" onClick={prevStep} className="bg-gradient-to-br from-pink-800 to-red-700 text-white p-2 rounded w-1/2 mr-2">Back</button>
-        <button type="button" onClick={nextStep} className="bg-gradient-to-br from-pink-800 to-red-700 text-white p-2 rounded w-1/2">Next</button>
-      </div>
-    </>
-  )}
-
-  {step === 5 && (
-    <>
-      <select name="purpose" value={formData.purpose} onChange={handleChange} className="w-full p-2 mb-2 border outline outline-pink-800 rounded placeholder-gray-400" required>
-        <option value="">Select Purpose</option>
-        <option value="I work here">I work here</option>
-        <option value="Meeting appointment">Meeting appointment</option>
-        <option value="Delivery">Delivery</option>
-        <option value="Service">Service</option>
-        <option value="Other">Other</option>
-      </select>
-      <button type="button" onClick={nextStep} className="bg-gradient-to-br from-pink-800 to-red-700 text-white p-2 rounded w-full">Next</button>
-    </>
-  )}
-
-        {step === 6 && (
-          <button type="submit" className="bg-pink-800 text-white p-2 rounded w-full" disabled={loading}>
-            {loading ? "Submitting..." : "Submit"}
-          </button>
+            <button type="submit" className="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-600 active:scale-95 transition">
+              Submit
+            </button>
+          </>
         )}
       </form>
+      <ToastContainer />
     </div>
   );
 };
 
-export default VisitorForm;
+export default VisitorPassForm;

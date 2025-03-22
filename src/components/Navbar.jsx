@@ -11,7 +11,7 @@ const Navbar = () => {
     <div className="fixed top-0 left-0 w-full z-50 bg-white/90 h-24 rounded-b-xl shadow-md flex items-center justify-between px-6 md:px-12 lg:px-16">
       {/* Left - Logo */}
       <div className="flex items-center">
-        <Link to="/"><img src={logo} alt="Logo" className="h-8 md:h-10 w-auto" /></Link>
+        <Link to="/"><img src={logo} alt="Logo" className="h-8 md:h-8 w-auto transition-transform transform hover:scale-130 duration-300 ease-in-out" /></Link>
         
       </div>
 
@@ -28,19 +28,20 @@ const Navbar = () => {
 
       {/* Right - Buttons & Burger Menu */}
       <div className="hidden md:flex space-x-4 mr-4 md:mr-10 lg:mr-20 bg-gradient-to-br from-pink-800 to-red-700 h-full w-auto md:w-[30rem] max-w-5xl p-2 md:p-3 rounded-lg md:rounded-none flex justify-center items-center">
-        <Link
-          to="/register-company"
-          className="text-white text-sm md:text-lg px-6 py-3 md:px-10 md:py-3 hover:underline text-center rounded-md"
-        >
-          Register Company
-        </Link>
-        <Link
-          to="/login"
-          className="text-white text-sm md:text-lg px-6 py-3 md:px-10 md:py-3 hover:underline text-center rounded-md"
-        >
-          Login
-        </Link>
-      </div>
+  <Link
+    to="/register-company"
+    className="text-white text-sm md:text-sm px-6 py-3 md:px-10 md:py-3 hover:underline text-center rounded-md transition-transform transform hover:scale-130 duration-300 ease-in-out"
+  >
+    Register Company
+  </Link>
+  <Link
+    to="/login"
+    className="text-white text-sm md:text-sm px-6 py-3 md:px-10 md:py-3 hover:underline text-center rounded-md transition-transform transform hover:scale-130 duration-300 ease-in-out"
+  >
+    Login
+  </Link>
+</div>
+
 
       <div className="md:hidden flex items-center">
         <HiMenu className="text-3xl text-pink-800 cursor-pointer" onClick={() => setIsOpen(true)} />
