@@ -37,16 +37,16 @@ const Features = () => {
           <img src={mobileImage} alt="Mobile UI" className="w-80 md:w-96 lg:w-[400px]" />
         </div>
         <div className="w-full lg:w-1/2">
-          <h2 className="text-4xl text-center text-pink-800 mb-4 font-semibold">User Side Features</h2>
+          <h2 className="text-2xl text-center text-pink-800 mb-4 font-semibold">User Side Features</h2>
           <div className="space-y-3 text-black text-lg">
             {userFeatures.map((item, index) => (
               <div key={index} className="collapse collapse-arrow rounded-lg ">
                 <input type="checkbox" id={`accordion-${index}`} checked={openIndex === index} onChange={() => toggleAccordion(index)} />
-                <label htmlFor={`accordion-${index}`} className="collapse-title text-sm cursor-pointer block ">
+                <label htmlFor={`accordion-${index}`} className="collapse-title md:text-sm text-xs cursor-pointer block ">
                   {item.title}
                 </label>
                 {openIndex === index && (
-                  <div className="collapse-content text-sm text-pink-800">{item.content}</div>
+                  <div className="collapse-content md:text-sm text-xs text-pink-800">{item.content}</div>
                 )}
               </div>
             ))}
@@ -59,7 +59,7 @@ const Features = () => {
       {/* Admin Features Section */}
       <div className="flex flex-col lg:flex-row items-center gap-8 p-6 lg:p-12">
         <div className="w-full lg:w-1/2">
-          <h2 className="text-4xl text-center text-pink-800 font-semibold mb-4">Admin Side Features</h2>
+          <h2 className="text-2xl text-center text-pink-800 font-semibold mb-4">Admin Side Features</h2>
           <div className="space-y-3 text-black">
             {adminFeatures.map((item, index) => (
               <div key={index} className="collapse collapse-arrow rounded-lg">
